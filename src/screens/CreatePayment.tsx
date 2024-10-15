@@ -218,7 +218,7 @@ export default function CreatePayment() {
 
 	function handleOnBlur() {
 		const personId = uuid.v4().toString();
-		const personName = selectedPersonName;
+		const personName = selectedPersonName?.trim() || "";
 
 		setSelectedPersonId(personId);
 		setSelectedPersonName(personName);
@@ -272,6 +272,7 @@ export default function CreatePayment() {
 						placeholderTextColor={styles.dropdownPlaceholder.color}
 						onBlur={handleOnBlur}
 						onChangeText={(text) => setSelectedPersonName(text)}
+						value={selectedPersonName ?? ""}
 					/>
 				)}
 				<Space size={16} />
