@@ -101,6 +101,12 @@ const styles = StyleSheet.create({
 		color: "#333",
 		paddingVertical: 0,
 	},
+	quoteText: {
+		fontSize: 16,
+		textAlign: "center",
+		color: "#666",
+		fontStyle: "italic",
+	},
 });
 
 export default function CreatePayment() {
@@ -290,7 +296,14 @@ export default function CreatePayment() {
 					/>
 				</View>
 
-				<Space size={16} />
+				<Space size={8} />
+				<Text style={styles.quoteText}>
+					{paymentType === "lent"
+						? "The other person owes you:"
+						: "You owe the other person:"}
+				</Text>
+
+				<Space size={8} />
 
 				<CurrencyInput
 					value={value}

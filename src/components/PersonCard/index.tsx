@@ -54,7 +54,7 @@ export default function index(props: PersonCardProps) {
 	return (
 		<TouchableOpacity
 			style={styles.card}
-			activeOpacity={0.8}
+			activeOpacity={0.5}
 			onPress={() => {
 				navigation?.navigate("Person", {
 					userId: props.personId,

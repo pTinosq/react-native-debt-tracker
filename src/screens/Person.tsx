@@ -3,7 +3,7 @@ import {
 	type RouteProp,
 	useRoute,
 } from "@react-navigation/native";
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import {
 	FlatList,
 	StyleSheet,
@@ -76,6 +76,8 @@ export default function Person() {
 	const people = store.getState().people.people;
 	const data = people[userId];
 
+	const total = calculateTotal(data?.payments);
+
 	if (!data || data === undefined) {
 		navigation?.goBack();
 		return null;
@@ -85,32 +87,34 @@ export default function Person() {
 		navigation?.goBack();
 	}
 
-	const sortedPayments = Object.entries(data.payments)
-		.map(([key, payment]) => ({ ...payment, key }))
-		.sort((a, b) => {
-			const dateA = new Date(a.date);
-			const dateB = new Date(b.date);
-			return dateA.getTime() - dateB.getTime();
-		})
-		.reverse();
+	// Memoize the sorted payments to avoid recalculating on every render
+	const sortedPayments = useMemo(() => {
+		return Object.entries(data.payments)
+			.map(([key, payment]) => ({ ...payment, key }))
+			.sort((a, b) => {
+				const dateA = new Date(a.date);
+				const dateB = new Date(b.date);
+				return dateA.getTime() - dateB.getTime();
+			})
+			.reverse();
+	}, [data.payments]);
 
 	return (
 		<View style={styles.container}>
 			<View style={styles.body}>
 				<Text style={styles.title}>{data.name}</Text>
-				<Text
-					style={[
-						styles.subtitle,
-						calculateTotal(data.payments) > 0 ? styles.green : styles.red,
-					]}
-				>
-					{formatMoney(calculateTotal(data.payments))}
+				<Text style={[styles.subtitle, total > 0 ? styles.green : styles.red]}>
+					{total > 0 ? `${data.name} owes you` : `You owe ${data.name}`}{" "}
+					{formatMoney(Math.abs(total))}
 				</Text>
 				<Space size={16} />
 				<FlatList
 					data={sortedPayments}
 					renderItem={({ item }) => <PaymentCard paymentData={item} />}
-					keyExtractor={(item) => item.key} // Use the key here
+					keyExtractor={(item) => item.key}
+					initialNumToRender={10} // Number of items to render initially
+					maxToRenderPerBatch={5} // Number of items to render per batch
+					windowSize={10} // Number of items to render outside the visible area
 					contentContainerStyle={{ gap: 8 }}
 				/>
 			</View>
