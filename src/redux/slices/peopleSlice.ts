@@ -49,7 +49,6 @@ const peopleSlice = createSlice({
 	reducers: {},
 	extraReducers: (builder) => {
 		builder.addCase(syncPeople.fulfilled, (state, action) => {
-			console.log("syncPeople.fulfilled");
 			const fetchedPeople = action.payload;
 
 			// create a new state object to build from scratch
@@ -66,8 +65,6 @@ const peopleSlice = createSlice({
 
 			// replace the current state with the new state
 			state.people = newState.people;
-
-			console.log("new state.people", state.people);
 		});
 	},
 });

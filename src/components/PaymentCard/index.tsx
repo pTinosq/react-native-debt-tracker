@@ -9,6 +9,7 @@ import {
 import type { Payment } from "../../redux/slices/peopleSlice";
 import { formatDate } from "../../utils/date-utils";
 import { formatMoney } from "../../utils/payment-utils";
+import database from "@react-native-firebase/database";
 
 const styles = StyleSheet.create({
 	container: {
@@ -77,6 +78,7 @@ const styles = StyleSheet.create({
 
 interface PaymentCardProps {
 	paymentData: Payment;
+	onDelete: () => void;
 }
 
 export default function PaymentCard(props: PaymentCardProps) {
@@ -95,7 +97,8 @@ export default function PaymentCard(props: PaymentCardProps) {
 		Vibration.vibrate(30);
 
 		if (isDeleteMode) {
-			console.log("473738", "DELETED");
+			props.onDelete();
+			setIsDeleteMode(false);
 			return;
 		}
 

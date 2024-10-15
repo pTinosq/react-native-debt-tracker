@@ -10,11 +10,13 @@ import {
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import Space from "../components/Space";
-import { store } from "../redux/store";
+import { store, type RootState } from "../redux/store";
 import ToggleButton from "../components/ToggleButton";
 import uuid from "react-native-uuid";
 import CurrencyInput from "react-native-currency-input";
 import database from "@react-native-firebase/database";
+import { useSelector } from "react-redux";
+import { syncPeople } from "../redux/slices/peopleSlice";
 
 const styles = StyleSheet.create({
 	container: {
@@ -123,7 +125,7 @@ export default function CreatePayment() {
 	const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
 	const [value, setValue] = useState(0);
 
-	const people = store.getState().people.people;
+	const people = useSelector((state: RootState) => state.people.people);
 
 	const peopleData = Object.keys(people).map((personId) => ({
 		value: personId,
@@ -179,7 +181,7 @@ export default function CreatePayment() {
 		}
 
 		const paymentId = uuid.v4().toString();
-		const formattedAmount = value * 100; // converts 0.34 to 34 (example)
+		const formattedAmount = Math.round(value * 100);
 
 		// If existing person, update their payments
 		// else use .set to create a new person
@@ -194,6 +196,7 @@ export default function CreatePayment() {
 						type: paymentType,
 					},
 					() => {
+						store.dispatch(syncPeople());
 						navigation?.goBack();
 					},
 				);
@@ -219,6 +222,8 @@ export default function CreatePayment() {
 						navigation?.goBack();
 					},
 				);
+
+			store.dispatch(syncPeople());
 		}
 	}
 

@@ -14,8 +14,11 @@ import {
 import type { RootStackParamList } from "../App";
 import PaymentCard from "../components/PaymentCard";
 import Space from "../components/Space";
-import { store } from "../redux/store";
+import { type RootState, store } from "../redux/store";
 import { calculateTotal, formatMoney } from "../utils/payment-utils";
+import database from "@react-native-firebase/database";
+import { syncPeople } from "../redux/slices/peopleSlice";
+import { useSelector } from "react-redux";
 
 const styles = StyleSheet.create({
 	container: {
@@ -73,7 +76,8 @@ export default function Person() {
 
 	const { userId } = route.params;
 
-	const people = store.getState().people.people;
+	const people = useSelector((state: RootState) => state.people.people);
+
 	const data = people[userId];
 
 	const total = calculateTotal(data?.payments);
@@ -99,6 +103,11 @@ export default function Person() {
 			.reverse();
 	}, [data.payments]);
 
+	function handlePaymentDelete(paymentId: string) {
+		database().ref(`/people/${userId}/payments/${paymentId}`).remove();
+		store.dispatch(syncPeople());
+	}
+
 	return (
 		<View style={styles.container}>
 			<View style={styles.body}>
@@ -110,7 +119,12 @@ export default function Person() {
 				<Space size={16} />
 				<FlatList
 					data={sortedPayments}
-					renderItem={({ item }) => <PaymentCard paymentData={item} />}
+					renderItem={({ item }) => (
+						<PaymentCard
+							paymentData={item}
+							onDelete={() => handlePaymentDelete(item.key)}
+						/>
+					)}
 					keyExtractor={(item) => item.key}
 					initialNumToRender={10} // Number of items to render initially
 					maxToRenderPerBatch={5} // Number of items to render per batch

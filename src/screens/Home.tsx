@@ -4,10 +4,10 @@ import CreatePaymentCard from "../components/CreatePaymentCard";
 import PersonCard from "../components/PersonCard";
 import { type RootState, store } from "../redux/store";
 import { calculateTotal } from "../utils/payment-utils";
-import { useCallback } from "react";
 import { syncPeople } from "../redux/slices/peopleSlice";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
+import { useEffect } from "react";
 
 const styles = StyleSheet.create({
 	container: {
@@ -25,11 +25,9 @@ const styles = StyleSheet.create({
 export default function Home() {
 	const people = useSelector((state: RootState) => state.people.people);
 
-	useFocusEffect(
-		useCallback(() => {
-			store.dispatch(syncPeople());
-		}, []),
-	);
+	useEffect(() => {
+		store.dispatch(syncPeople());
+	}, []);
 
 	const filteredPeopleData = Object.keys(people).reduce(
 		(
