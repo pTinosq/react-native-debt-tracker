@@ -2,17 +2,17 @@ import React, { StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import CreatePaymentCard from "../components/CreatePaymentCard";
 import PersonCard from "../components/PersonCard";
-import { RootState, store } from "../redux/store";
+import { type RootState, store } from "../redux/store";
 import { calculateTotal } from "../utils/payment-utils";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { syncPeople } from "../redux/slices/peopleSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#f0f",
+		backgroundColor: "#f3f3f3",
 	},
 	scrollView: {
 		alignItems: "center",

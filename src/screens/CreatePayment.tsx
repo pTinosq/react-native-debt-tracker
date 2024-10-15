@@ -19,7 +19,7 @@ import database from "@react-native-firebase/database";
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#fff",
+		backgroundColor: "#f3f3f3",
 		justifyContent: "flex-end",
 		padding: 16,
 	},
