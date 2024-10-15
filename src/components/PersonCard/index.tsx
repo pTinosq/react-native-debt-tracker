@@ -45,7 +45,6 @@ interface PersonCardProps {
 }
 
 export default function index(props: PersonCardProps) {
-	console.log("941877", props);
 	const navigation = useContext(NavigationContext);
 
 	const total = calculateTotal(props.person.payments);
