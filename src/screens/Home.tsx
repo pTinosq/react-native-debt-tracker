@@ -1,4 +1,4 @@
-import React, { StyleSheet, Text, TouchableOpacity } from "react-native";
+import React, { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import CreatePaymentCard from "../components/CreatePaymentCard";
 import PersonCard from "../components/PersonCard";
@@ -30,6 +30,29 @@ const styles = StyleSheet.create({
 		left: 16,
 		width: 64,
 		height: 64,
+	},
+	footer: {
+		backgroundColor: "#ffffff",
+		paddingVertical: 16,
+		paddingHorizontal: 24,
+		borderTopColor: "#ddd",
+		borderTopWidth: 1,
+	},
+	footerText: {
+		textAlign: "center",
+		fontSize: 16,
+		fontWeight: "bold",
+		color: "black",
+	},
+	footerAmount: {
+		fontSize: 16,
+		fontWeight: "bold",
+		color: "#ce0c0c", // Red for owed to others
+	},
+	footerGreenAmount: {
+		fontSize: 16,
+		fontWeight: "bold",
+		color: "#15ad1f", // Green for owed to you
 	},
 });
 
@@ -68,6 +91,19 @@ export default function Home() {
 		store.dispatch(syncPeople());
 	}
 
+	// Calculate total money owed to you and to others
+	let totalOwedToYou = 0;
+	let totalOwedToOthers = 0;
+
+	for (const personId of Object.keys(people)) {
+		const total = calculateTotal(people[personId].payments);
+		if (total > 0) {
+			totalOwedToYou += total;
+		} else {
+			totalOwedToOthers += Math.abs(total); // Since owed to others is negative
+		}
+	}
+
 	return (
 		<>
 			<ScrollView
@@ -90,6 +126,20 @@ export default function Home() {
 					})
 				}
 			</ScrollView>
+			<View style={styles.footer}>
+				<Text style={styles.footerText}>
+					Money owed to you:{" "}
+					<Text style={styles.footerGreenAmount}>
+						£{(totalOwedToYou / 100).toFixed(2)}
+					</Text>
+				</Text>
+				<Text style={styles.footerText}>
+					Money owed to others:{" "}
+					<Text style={styles.footerAmount}>
+						£{(totalOwedToOthers / 100).toFixed(2)}
+					</Text>
+				</Text>
+			</View>
 			<TouchableOpacity
 				onPress={() => {
 					setHideZeroed(!hideZeroed);
