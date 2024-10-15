@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import type { Payment } from "../../redux/slices/peopleSlice";
 import { formatDate } from "../../utils/date-utils";
 import { formatMoney } from "../../utils/payment-utils";
@@ -56,8 +56,15 @@ export default function PaymentCard(props: PaymentCardProps) {
 	const backgroundColor =
 		props.paymentData.type === "lent" ? "#eaffea" : "#ffeaea";
 
+	function handleOnPress() {
+		// TODO: Do something?
+	}
+
 	return (
-		<View style={[styles.container, { backgroundColor }]}>
+		<TouchableOpacity
+			style={[styles.container, { backgroundColor }]}
+			onPress={handleOnPress}
+		>
 			<View style={styles.cardHeader}>
 				<Text style={styles.dateText}>
 					{formatDate(props.paymentData.date)}
@@ -75,6 +82,6 @@ export default function PaymentCard(props: PaymentCardProps) {
 				<Text style={styles.title}>{props.paymentData.description}</Text>
 				<Text style={styles.bodyText}>{props.paymentData.type}</Text>
 			</View>
-		</View>
+		</TouchableOpacity>
 	);
 }
