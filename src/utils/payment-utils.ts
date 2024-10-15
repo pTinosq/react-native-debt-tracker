@@ -1,6 +1,10 @@
 import type { Person } from "../redux/slices/peopleSlice";
 
-export function calculateTotal(payments: Person["payments"]) {
+export function calculateTotal(payments?: Person["payments"]) {
+	if (!payments) {
+		return 0;
+	}
+
 	return Object.values(payments).reduce((total, payment) => {
 		switch (payment.type) {
 			case "borrowed":

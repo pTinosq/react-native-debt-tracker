@@ -49,23 +49,25 @@ const peopleSlice = createSlice({
 	reducers: {},
 	extraReducers: (builder) => {
 		builder.addCase(syncPeople.fulfilled, (state, action) => {
+			console.log("syncPeople.fulfilled");
 			const fetchedPeople = action.payload;
+
+			// create a new state object to build from scratch
+			const newState = { people: {} as PeopleState["people"] };
 
 			for (const personId in fetchedPeople) {
 				const fetchedPerson = fetchedPeople[personId];
 
-				if (state.people[personId]) {
-					const existingPerson = state.people[personId];
-					for (const paymentId in fetchedPerson.payments) {
-						if (!existingPerson.payments[paymentId]) {
-							existingPerson.payments[paymentId] =
-								fetchedPerson.payments[paymentId];
-						}
-					}
-				} else {
-					state.people[personId] = fetchedPerson;
-				}
+				newState.people[personId] = {
+					...fetchedPerson,
+					payments: { ...fetchedPerson.payments },
+				};
 			}
+
+			// replace the current state with the new state
+			state.people = newState.people;
+
+			console.log("new state.people", state.people);
 		});
 	},
 });
