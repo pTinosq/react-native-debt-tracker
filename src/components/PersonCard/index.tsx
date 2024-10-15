@@ -68,7 +68,7 @@ export default function index(props: PersonCardProps) {
 			</View>
 			<View style={styles.cardBody}>
 				<Text style={styles.bodyText}>
-					From {props.person.payments.length} payments
+					From {Object.keys(props.person.payments).length} payments
 				</Text>
 			</View>
 		</TouchableOpacity>

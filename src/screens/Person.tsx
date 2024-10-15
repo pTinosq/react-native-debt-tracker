@@ -85,7 +85,8 @@ export default function Person() {
 		navigation?.goBack();
 	}
 
-	const sortedPayments = Object.values(data.payments)
+	const sortedPayments = Object.entries(data.payments)
+		.map(([key, payment]) => ({ ...payment, key }))
 		.sort((a, b) => {
 			const dateA = new Date(a.date);
 			const dateB = new Date(b.date);
@@ -97,9 +98,6 @@ export default function Person() {
 		<View style={styles.container}>
 			<View style={styles.body}>
 				<Text style={styles.title}>{data.name}</Text>
-				{/* <Text style={styles.subtitle}>
-					{formatMoney(calculateTotal(data.payments))}
-				</Text> */}
 				<Text
 					style={[
 						styles.subtitle,
@@ -112,7 +110,7 @@ export default function Person() {
 				<FlatList
 					data={sortedPayments}
 					renderItem={({ item }) => <PaymentCard paymentData={item} />}
-					keyExtractor={(item) => item.id}
+					keyExtractor={(item) => item.key} // Use the key here
 					contentContainerStyle={{ gap: 8 }}
 				/>
 			</View>

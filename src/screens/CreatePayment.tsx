@@ -149,6 +149,21 @@ export default function CreatePayment() {
 			return false;
 		}
 
+		// Check if the person exists (check the lowercase, trimmed version of the name)
+		const personExists = Object.values(people).find(
+			(person) =>
+				person.name.toLowerCase().trim() ===
+				selectedPersonName?.toLowerCase().trim(),
+		);
+
+		if (personSelectType === "new" && personExists) {
+			Alert.alert(
+				"Error",
+				"A person with this name already exists. Please select the existing person instead.",
+			);
+			return false;
+		}
+
 		return true;
 	}
 
@@ -158,23 +173,47 @@ export default function CreatePayment() {
 		}
 
 		const paymentId = uuid.v4().toString();
+		const formattedAmount = value * 100; // converts 0.34 to 34 (example)
 
-		database()
-			.ref(`/people/${selectedPersonId}`)
-			.set({
-				name: selectedPersonName,
-				payments:{
-					[paymentId]: {
-					amount: value,
-					date: new Date().toISOString(),
-					description,
-					type: paymentType
-				}
-				}},
-				() => {
-					navigation?.goBack();
-				},
-			);
+		// If existing person, update their payments
+		// else use .set to create a new person
+		if (personSelectType === "existing") {
+			database()
+				.ref(`/people/${selectedPersonId}/payments/${paymentId}`)
+				.set(
+					{
+						amount: formattedAmount,
+						date: new Date().toISOString(),
+						description,
+						type: paymentType,
+					},
+					() => {
+						navigation?.goBack();
+					},
+				);
+		} else {
+			const personId = uuid.v4().toString();
+			const personName = selectedPersonName;
+
+			database()
+				.ref(`/people/${personId}`)
+				.set(
+					{
+						name: personName,
+						payments: {
+							[paymentId]: {
+								amount: formattedAmount,
+								date: new Date().toISOString(),
+								description,
+								type: paymentType,
+							},
+						},
+					},
+					() => {
+						navigation?.goBack();
+					},
+				);
+		}
 	}
 
 	function handleOnBlur() {
