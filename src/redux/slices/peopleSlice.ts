@@ -32,10 +32,6 @@ export const syncPeople = createAsyncThunk(
 			const snapshot = await database().ref("/people").once("value");
 			const data = snapshot.val();
 
-			if (!data) {
-				return rejectWithValue("Failed to fetch people");
-			}
-
 			return data;
 		} catch (error) {
 			return rejectWithValue("Error fetching people");
@@ -54,13 +50,14 @@ const peopleSlice = createSlice({
 			// create a new state object to build from scratch
 			const newState = { people: {} as PeopleState["people"] };
 
-			for (const personId in fetchedPeople) {
-				const fetchedPerson = fetchedPeople[personId];
-
-				newState.people[personId] = {
-					...fetchedPerson,
-					payments: { ...fetchedPerson.payments },
-				};
+			if (fetchedPeople) {
+				for (const personId in fetchedPeople) {
+					const fetchedPerson = fetchedPeople[personId];
+					newState.people[personId] = {
+						...fetchedPerson,
+						payments: { ...fetchedPerson.payments },
+					};
+				}
 			}
 
 			// replace the current state with the new state
@@ -68,5 +65,4 @@ const peopleSlice = createSlice({
 		});
 	},
 });
-
 export default peopleSlice.reducer;

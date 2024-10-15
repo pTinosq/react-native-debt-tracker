@@ -9,7 +9,6 @@ import {
 import type { Payment } from "../../redux/slices/peopleSlice";
 import { formatDate } from "../../utils/date-utils";
 import { formatMoney } from "../../utils/payment-utils";
-import database from "@react-native-firebase/database";
 
 const styles = StyleSheet.create({
 	container: {
